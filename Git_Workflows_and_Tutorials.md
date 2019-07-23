@@ -18,7 +18,7 @@ Now you have created the *origin* or *upstream* master repository. All local rep
 
 4) Now the git heirarchy is set up, but the repos are still empty. Use `git add .` to add all files and subfolders in the current directory to the staging area.
 
-5) Use `git commit` to commit the staged changes (added files) to the local repo. You will be asked to provide a description of the changes made - saying "added inital files" is enough.
+5) Use `git commit -m "YOUR_MESSAGE"` to commit the staged changes (added files) to the local repo. You will be asked to provide a description of the changes made - saying "added inital files" is enough.
 
 6) Finally, use `git push` to push the commit *upstream* to the origin. You will be asked for your Github username and password, which are the credentials that allow you to edit the origin - at this point, only you have permissions to do this.
 
@@ -28,7 +28,7 @@ If the repositories are set up as described in the previous section, users can c
 
 *Before working on code*, bring up a terminal in the directory of your local repository (right click -> open terminal or, on mac, drag the folder in finder into the terminal window). Use `git pull` to make sure your local repository is up-to-date with the remote origin.
 
-*After working on code*, bring up a terminal in the directory once again. Use `git add .` to move all new or changed files in the directory to the staging area. You can also use `git add <filename>` to add individual files or folders. Use `git commit` to commit the staging area to the local repository. You will be asked to describe the changes in a short comment - this is important to keep track of what was changed in each iteration. Finally, use `git push` to push the changes to the remote origin that was originally cloned when you set up the local repository. You will be asked for your credentials (Github account) which give you permission to do this.
+*After working on code*, bring up a terminal in the directory once again. Use `git add .` to move all new or changed files in the directory to the staging area. You can also use `git add <filename>` to add individual files or folders. Use `git commit` to commit the staging area to the local repository. You will be asked to describe the changes in a short comment - this is important to keep track of what was changed in each iteration. Alternatively, use `git commit -m "YOUR_MESSAGE"` to include the message directly in the commit command. Finally, use `git push` to push the changes to the remote origin that was originally cloned when you set up the local repository. You will be asked for your credentials (Github account) which give you permission to do this.
 
 **Using git to work from any other computer**
 
@@ -53,3 +53,33 @@ If A and B are working on the same file, the rebase may fail with `CONFLICT (con
 *Avoiding conflicting changes*
 
 This example shows how tedious it can be to have two people working on the same file. To avoid this, it is good practice to **functionalize** your code as much as possible. This means you should package operations into self-contained functions that are saved as separate files (at least in Matlab). This makes it far less likely that mutliple collaborators edit the same file when developing. It's also better practice in general; it's much easier to debug, and easier for others to read.
+
+### Troubleshooting
+
+Even when following these guides, it is easy for things to go wrong, especially for new users on the command line. Here are some ways to trouleshoot common issues. All commands require a command line terminal open at the git repository location.
+
+**Undo local change**: you made and saved a change to a file that you want to undo, reverting back to the version in your local repository. Use `git checkout -- <bad filename>` to delete the edited version. Be careful - it will be gone forever!
+
+**Undo local commit**: you made a local commit(s) that you want to undo, and have not pushed to github yet. Use `git reset <last good SHA>`, where the SHA is the 40-character hash code identifying the version that you want to revert to. You can see a list of each commit and its SHA with `git log`. The reset reverts the commits, but does not change your content. You can change the content as well with `git reset --hard <last good SHA>`.
+
+**Undo git push**: you pushed changes to github that you want to undo. Use `git revert <SHA>`, where SHA is the has code described earlier. This reverts the commit identified by the SHA - for every change in SHA, an inverse change is generated and applied. Now use `git push` to push the revert to github.
+
+**Redo after undo local commit**: you undo a local commit with `git reset --hard <SHA>`, and then realize you want the changes back. Use `git reflog` to view all the times that `HEAD` has been changed:
+
+`6cd241f (HEAD -> master, origin/master, origin/HEAD) HEAD@{0}: commit: Created PDF`\
+`fb8005b HEAD@{1}: commit: Added workflow file`\
+`3b578dd HEAD@{2}: commit: Added code files`\
+`4246b51 HEAD@{3}: clone: from https://github.com/rlang81/Test_Repository`
+
+Either recreate the repository as it was at a given commit with `git reset --hard <SHA>` or recover a single file as it was at that time without altering history with `git checkout <SHA> -- <filename>`.
+
+**Delete the commit history of a repositiory**: you realize that your commit history includes changes that you don't want visible (contains undisclosed work, for example). This is mostly for public repositories that will be visible to everyone on github. What we do here is create an orphan branch, which contains no knowledge of previous commits, and delete the old branch. This will permanently delete your commit history!
+
+`git checkout --orphan TEMP_BRANCH` - create an empty, blank branch\
+`git add -A` - add all files to the new branch\
+`git commit -am "the first commit"`\
+`git branch -D master` - delete the old master branch\
+`git branch -m master` - rename TEMP_BRANCH to master\
+`git push -f origin master` - force push master to origin
+
+This results in a clean history, as if you only made one commit to the repository. Everything else is identical to before.
