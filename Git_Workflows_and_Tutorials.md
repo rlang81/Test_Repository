@@ -58,7 +58,7 @@ This example shows how tedious it can be to have two people working on the same 
 
 Even when following these guides, it is easy for things to go wrong, especially for new users on the command line. Here are some ways to trouleshoot common issues. All commands require a command line terminal open at the git repository location.
 
-**Undo local change**: you made and saved a change to a file that you want to undo, reverting back to the version in your local repository. Use `git checkout -- <bad filename>` to delete the edited version. Be careful - it will be gone forever!
+**Undo local change**: you made and saved a change to a file that you want to undo, reverting back to the version in your local repository. Use `git checkout -- <bad filename>` to delete the edited version and replace it with the version last committed. Be careful - it will be gone forever!
 
 **Undo local commit**: you made a local commit(s) that you want to undo, and have not pushed to github yet. Use `git reset <last good SHA>`, where the SHA is the 40-character hash code identifying the version that you want to revert to. You can see a list of each commit and its SHA with `git log`. The reset reverts the commits, but does not change your content. You can change the content as well with `git reset --hard <last good SHA>`.
 
@@ -83,3 +83,9 @@ Either recreate the repository as it was at a given commit with `git reset --har
 `git push -f origin master` - force push master to origin
 
 This results in a clean history, as if you only made one commit to the repository. Everything else is identical to before.
+
+### Additional resources
+
+Youtube video on git basics for personal and collaborative use using command line:\
+[Part 1](https://www.youtube.com/watch?v=0fKg7e37bQE) - single use basics\
+[Part 2](https://www.youtube.com/watch?v=oFYyTZwMyAg) - team use, branching and workflows
